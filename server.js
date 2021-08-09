@@ -15,21 +15,23 @@ const PORT = process.env.PORT || 3001;
 // http://localhost:3001/book
 mongoose.connect('mongodb://localhost:27017/book_db', {useNewUrlParser: true, useUnifiedTopology: true});
 
-const bookSchema = new mongoose.Schema({
+const booksSchema = new mongoose.Schema({
   title: String,
   description: String,
   status: String,
+  Image: String,
   email : String,
 });
 
-const Book = mongoose.model('Book', bookSchema);
+const Book = mongoose.model('Book', booksSchema);
 
-function seedBooksCollection() {
+function seedBooksCollections() {
 
 const javaScript =new Book({
   title: 'JavaScript',
   description: 'useful book to study javascript language',
   status: 'Educational Book ',
+  image:'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/old-books-arranged-on-shelf-royalty-free-image-1572384534.jpg?crop=0.668xw:1.00xh;0,0&resize=480:*',
   email : 'naeemalomari96@gmail.com',
 });
 
@@ -37,6 +39,7 @@ const html =new Book({
   title: 'HTML book',
   description: 'useful book to study HTML language',
   status: 'Educational Book ',
+  image:'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/old-books-arranged-on-shelf-royalty-free-image-1572384534.jpg?crop=0.668xw:1.00xh;0,0&resize=480:*',
   email : 'naeemalomari96@gmail.com',
 });
 
@@ -44,6 +47,7 @@ const css =new Book({
   title: 'CSS',
   description: 'useful book to study CSS language',
   status: 'Educational Book ',
+  image:'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/old-books-arranged-on-shelf-royalty-free-image-1572384534.jpg?crop=0.668xw:1.00xh;0,0&resize=480:*',
   email : 'naeemalomari96@gmail.com',
 });
 
