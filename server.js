@@ -7,14 +7,14 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const jwksClient = require('jwks-rsa');
 // const Model = require('./Model')
-server.use(express.json());
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 
 const PORT = process.env.PORT || 3001;
 // http://localhost:3001/book
-mongoose.connect('mongodb://localhost:27017/book_db', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://localhost:27017/book', { useNewUrlParser: true, useUnifiedTopology: true });
 
 const booksSchema = new mongoose.Schema({
   title: String,
@@ -35,7 +35,7 @@ const libraryModel = mongoose.model('library', librarySchema);
 function seedBooksCollections() {
 
   const javaScript = new Book({
-    title: 'JavaScript',
+    title: 'JavaScript Book',
     description: 'useful book to study javascript language',
     status: 'Educational Book ',
     image: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/old-books-arranged-on-shelf-royalty-free-image-1572384534.jpg?crop=0.668xw:1.00xh;0,0&resize=480:*',
@@ -43,7 +43,7 @@ function seedBooksCollections() {
   });
 
   const html = new Book({
-    title: 'HTML book',
+    title: 'HTML Book',
     description: 'useful book to study HTML language',
     status: 'Educational Book ',
     image: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/old-books-arranged-on-shelf-royalty-free-image-1572384534.jpg?crop=0.668xw:1.00xh;0,0&resize=480:*',
@@ -51,7 +51,7 @@ function seedBooksCollections() {
   });
 
   const css = new Book({
-    title: 'CSS',
+    title: 'CSS Book ',
     description: 'useful book to study CSS language',
     status: 'Educational Book ',
     image: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/old-books-arranged-on-shelf-royalty-free-image-1572384534.jpg?crop=0.668xw:1.00xh;0,0&resize=480:*',
@@ -66,38 +66,38 @@ function seedBooksCollections() {
 
 // seedBooksCollection();
 
-function seedLibraryCollection() {
+// function seedLibraryCollection() {
 
-  const library = new libraryModel({
-    libraryName: 'Programming',
-    books: [
-      {
-        title: 'JavaScript',
-        description: 'useful book to study javascript language',
-        status: 'Educational Book ',
-      },
-      {
-        title: 'HTML book',
-        description: 'useful book to study HTML language',
-        status: 'Educational Book ',
-      }
-    ]
-  });
+//   const library = new libraryModel({
+//     libraryName: 'Programming',
+//     books: [
+//       {
+//         title: 'JavaScript Book',
+//         description: 'useful book to study javascript language',
+//         status: 'Educational Book ',
+//       },
+//       {
+//         title: 'HTML Book',
+//         description: 'useful book to study HTML language',
+//         status: 'Educational Book ',
+//       }
+//     ]
+//   });
 
-  const library2 = new libraryModel({
-    libraryName: 'Engineering',
-    books: [
-    {
-      title: 'reinforcement concrete 2',
-      description: 'useful in civil engineering field',
-      status: 'Educational Book ',
-    }
-    ]
-  })
-library.save();
-library2.save();
-}
-seedLibraryCollection();
+//   const library2 = new libraryModel({
+//     libraryName: 'Engineering',
+//     books: [
+//     {
+//       title: 'reinforcement concrete ||  Book ',
+//       description: 'useful in civil engineering field',
+//       status: 'Educational Book ',
+//     }
+//     ]
+//   })
+// library.save();
+// library2.save();
+// }
+// seedLibraryCollection();
 
 //http://localhost:3001/book
 app.get('/book', getBookHandler);
@@ -113,28 +113,49 @@ function getBookHandler(request, response) {
   })
 }
 
-//http://localhost:3001/books 
-app.post('books', getBooksHandler);
+//http://localhost:3001/books
+app.post('/books', getBooksHandler);
 function getBooksHandler(req,res) {
+const {email,title,description, status}=req.body;
+Book.find({email:email},(err,resultBooks)=> {
+  if (resultBooks.length == 0) {
+    // res.status(404).send("cant find any user");
+    const newObj = {
+      title: title,
+      description: description,
+      status: status,
+      email: email,
+    };
+    resultBooks.push(newObj);
+    let bookArr = resultBooks.map((i) => {
+      return new BooksSaver(i);
+    });
+    res.send(bookArr);
+    Book.insertMany(newObj);
+  } else {
+    const newObj = {
+      title: title,
+      description: description,
+      status: status,
+      email: email,
+    };
+    resultBooks.push(newObj);
+    let bookArr = resultBooks.map((i) => {
+      return new BooksSaver(i);
+    });
+    res.send(bookArr);
+    Book.insertMany(newObj);
+  }
 
-  libraryModel.find(function(err,booksArray)  {
-    if(err) {
-      console.log('ERROR FIND ANOTHER WAY TO FIX YOUR PROBLEM')
-    }else {
-      console.log(booksArray);
-      console.log(booksArray[0].books);
-      res.send(booksArray[0].books);
-    }
-  })
+});
 }
-
-app.get('/test', (request, response) => {
-  // TODO: 
-  // STEP 1: get the jwt from the headers
-  // STEP 2. use the jsonwebtoken library to verify that it is a valid jwt
-  // jsonwebtoken dock - https://www.npmjs.com/package/jsonwebtoken
-  // STEP 3: to prove that everything is working correctly, send the opened jwt back to the front-end
-})
+class BooksSaver {
+  constructor(i) {
+    this.title = i.title;
+    this.description = i.description;
+    this.status = i.status;
+  }
+}
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
 
 
