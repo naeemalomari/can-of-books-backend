@@ -163,17 +163,42 @@ function deleteBook(req, res) {
   const idx = req.params.idx;
   const email = req.query.email;
 // console.log(req.params)
-  Book.deleteOne({ email: email, _idx: idx });
-  Book.find({ email: email }, (err, result) => {
+  Book.findOne({ email: email, idx: idx });
+  Book.filter({ email: email }, (err, result) => {
     if (result.length == 0 || err) {
       res.status(404).send("Error check it ");
     } else {
       res.send(result.data);
             // result.data.save();
-
     }
   });
 }
+
+
+//http://localhost:3001/books/1
+app.put('/updateBooks/:idx',updateBook)
+
+function updateBook (req,res) {
+
+  const { email, title, description, status } = req.body;
+  const id = req.params.idx;
+  console.log(typeof idx);
+
+   Book.updateOne(
+    { idx: idx },
+    { title: title, description: description, status: status, email: email }
+  );
+
+  Book.find({ idx: idx }, (err, result) => {
+    if (err) {
+      res.send(500, "Book Not Found");
+    } else {
+      res.send(result);
+    }
+  });
+
+}
+
 
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
 
