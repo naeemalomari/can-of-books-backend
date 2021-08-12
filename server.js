@@ -156,6 +156,25 @@ class BooksSaver {
     this.status = i.status;
   }
 }
+app.delete("/books/:idx", deleteBook);
+
+//http://localhost:3001/books/1
+function deleteBook(req, res) {
+  const idx = req.params.idx;
+  const email = req.query.email;
+// console.log(req.params)
+  Book.deleteOne({ email: email, _idx: idx });
+  Book.find({ email: email }, (err, result) => {
+    if (result.length == 0 || err) {
+      res.status(404).send("Error check it ");
+    } else {
+      res.send(result.data);
+            // result.data.save();
+
+    }
+  });
+}
+
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
 
 
