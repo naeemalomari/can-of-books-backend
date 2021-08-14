@@ -14,7 +14,8 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3001;
 // http://localhost:3001/book
-mongoose.connect('mongodb://localhost:27017/book', { useNewUrlParser: true, useUnifiedTopology: true });
+// mongoose.connect('mongodb://localhost:27017/book', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MONGOURL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const booksSchema = new mongoose.Schema({
   title: String,
@@ -65,6 +66,7 @@ function seedBooksCollections() {
 }
 
 // seedBooksCollection();
+// seedBooksCollections()
 
 // function seedLibraryCollection() {
 
